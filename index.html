@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hera's Period Tracker</title>
+
+<style>
+:root {
+  --pink: #ff4f81;
+  --soft: #fff0f5;
+  --dark: #4a0033;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffd6e8, #fff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 360px;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+<p style="font-size:0.7rem; color:#999; text-align:center; margin-top:15px;">
+  Hera’s Period Tracker provides estimates only and is not medical advice.
+</p>
+
+h2 {
+  text-align: center;
+  color: var(--pink);
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--dark);
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: var(--pink);
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.result {
+  margin-top: 20px;
+  background: var(--soft);
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.highlight {
+  color: var(--pink);
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>🌸 Hera's Period Tracker</h2>
+
+  <p style="text-align:center; font-size:0.85rem; color:#888; margin-bottom:15px;">
+  Track • Predict • Care
+</p>
+
+  <label>Last Period Start Date</label>
+  <input type="date" id="lastPeriod">
+
+  <label>Average Cycle Length (days)</label>
+  <input type="number" id="cycleLength" placeholder="e.g. 28">
+
+  <button onclick="track()">Track Cycle</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+function track() {
+  const lastInput = document.getElementById("lastPeriod").value;
+  const cycle = Number(document.getElementById("cycleLength").value);
+  const result = document.getElementById("result");
+
+  if (!lastInput || !cycle) {
+    result.innerHTML = "<p>Please enter all details.</p>";
+    return;
+  }
+
+  // 🚨 VALIDATION
+  if (cycle < 21 || cycle > 45) {
+    result.innerHTML = `
+      <p style="color:#ff4f81; font-weight:bold;">
+        ⚠️ Cycle length should be between 21 and 45 days.
+      </p>
+    `;
+    return;
+  }
+
+  const lastDate = new Date(lastInput);
+
+  // Next period
+  const nextPeriod = new Date(lastDate);
+  nextPeriod.setDate(lastDate.getDate() + cycle);
+
+  // Ovulation ≈ 14 days before next period
+  const ovulation = new Date(nextPeriod);
+  ovulation.setDate(nextPeriod.getDate() - 14);
+
+  // Fertile window
+  const fertileStart = new Date(ovulation);
+  fertileStart.setDate(ovulation.getDate() - 5);
+
+  const fertileEnd = new Date(ovulation);
+  fertileEnd.setDate(ovulation.getDate() + 1);
+
+  result.innerHTML = `
+    <p>🩸 <strong>Next Period:</strong> ${nextPeriod.toDateString()}</p>
+    <p>🥚 <strong>Ovulation Day:</strong> ${ovulation.toDateString()}</p>
+    <p>🌱 <strong>Fertile Window:</strong><br>
+      ${fertileStart.toDateString()} – ${fertileEnd.toDateString()}
+    </p>
+  `;
+}
+</script>
+
+</body>
+</html>
